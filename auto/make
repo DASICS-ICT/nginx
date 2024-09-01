@@ -225,12 +225,25 @@ ngx_main_link=${MAIN_LINK:+`echo $MAIN_LINK \
 
 cat << END                                                    >> $NGX_MAKEFILE
 
+DIR_DASICS = \$(shell pwd)/LibDASICS
+BIN_DASICS = \$(DIR_DASICS)/build/LibDASICS.a
+
+DASICS_FLAG = -I\$(DIR_DASICS)/include -T\$(DIR_DASICS)/ld.lds
+
 build:	binary modules manpage
 
-binary:	$NGX_OBJS${ngx_dirsep}nginx$ngx_binext
+binary:	$NGX_OBJS${ngx_dirsep}nginx$ngx_binext 
 
-$NGX_OBJS${ngx_dirsep}nginx$ngx_binext:	$ngx_deps$ngx_spacer
-	\$(LINK) $ngx_long_start$ngx_binout$NGX_OBJS${ngx_dirsep}nginx$ngx_binext$ngx_long_cont$ngx_objs$ngx_libs$ngx_link$ngx_main_link
+libdasics: \$(BIN_DASICS)
+
+\$(BIN_DASICS):
+ifeq (\$(wildcard \$(DIR_DASICS)/*),)
+	git submodule update --init \$(DIR_DASICS)
+endif
+	\$(MAKE) -C \$(DIR_DASICS)
+
+$NGX_OBJS${ngx_dirsep}nginx$ngx_binext:	$ngx_deps	libdasics$ngx_spacer
+	\$(LINK) $ngx_long_start$ngx_binout$NGX_OBJS${ngx_dirsep}nginx$ngx_binext$ngx_long_cont$ngx_objs \$(BIN_DASICS)$ngx_libs$ngx_link \$(DASICS_FLAG)$ngx_main_link
 	$ngx_rcc
 $ngx_long_end
 
