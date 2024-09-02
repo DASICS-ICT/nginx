@@ -1,13 +1,13 @@
 #!/bin/sh
 ./auto/configure\
- --prefix=$PWD/../nginx-bin\
+ --prefix=$PWD/../nginx-bi-x86\
  --builddir=$PWD/build\
  --user=nginx\
  --group=nginx\
  --with-file-aio\
  --with-ipv6\
- --with-cc=riscv64-unknown-linux-gnu-gcc\
- --with-cpp=riscv64-unknown-linux-gnu-g++\
+ --with-cc=gcc\
+ --with-cpp=g++\
  --with-http_ssl_module\
  --with-http_v2_module\
  --with-http_realip_module\
