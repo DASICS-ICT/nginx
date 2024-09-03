@@ -1,6 +1,7 @@
 #!/bin/sh
 ./auto/configure\
- --prefix=$PWD/../nginx-bi-x86\
+ --with-cc-opt='-ggdb3 -O0'\
+ --prefix=$PWD/../nginx-bin-x86\
  --builddir=$PWD/build\
  --user=nginx\
  --group=nginx\
@@ -31,14 +32,16 @@
  --with-stream_ssl_module\
  --with-mail_ssl_module\
  --with-debug\
- --error-log-path=/var/log/nginx/error.log\
- --http-log-path=/var/log/nginx/access.log\
- --http-client-body-temp-path=/var/lib/nginx/tmp/client_body\
- --http-fastcgi-temp-path=/var/lib/nginx/tmp/fastcgi\
- --http-proxy-temp-path=/var/lib/nginx/tmp/proxy\
- --http-scgi-temp-path=/var/lib/nginx/tmp/scgi\
- --http-uwsgi-temp-path=/var/lib/nginx/tmp/uwsgi\
- --pid-path=/run/nginx.pid\
- --lock-path=/run/lock/subsys/nginx
+ --with-openssl=$PWD/../openssl\
+ --with-openssl-opt=
+#  --error-log-path=/var/log/nginx/error.log\
+#  --http-log-path=/var/log/nginx/access.log\
+#  --http-client-body-temp-path=/var/lib/nginx/tmp/client_body\
+#  --http-fastcgi-temp-path=/var/lib/nginx/tmp/fastcgi\
+#  --http-proxy-temp-path=/var/lib/nginx/tmp/proxy\
+#  --http-scgi-temp-path=/var/lib/nginx/tmp/scgi\
+#  --http-uwsgi-temp-path=/var/lib/nginx/tmp/uwsgi\
+#  --pid-path=/run/nginx.pid\
+#  --lock-path=/run/lock/subsys/nginx
 
-make -j`nproc` && make install
+# make -j`nproc` && make install
