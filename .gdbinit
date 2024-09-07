@@ -5,7 +5,7 @@ set follow-fork-mode child
 
 b main
 
-
+b ngx_ssl_init
 
 b ngx_process_events_and_timers
 
