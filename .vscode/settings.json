@@ -1,0 +1,25 @@
+{
+    "files.associations": {
+        "udasics.h": "c",
+        "ngx_core.h": "c",
+        "ngx_event.h": "c",
+        "dynamic.h": "c",
+        "udirect.h": "c",
+        "elf.h": "c",
+        "uthash.h": "c",
+        "ucsr.h": "c",
+        "compare": "c",
+        "cstdint": "c",
+        "cstdlib": "c",
+        "ufuncmem.h": "c",
+        "list.h": "c",
+        "dmalloc.h": "c",
+        "mem.h": "c",
+        "uattr.h": "c",
+        "openssl_mem.h": "c",
+        "assert.h": "c",
+        "umaincall.h": "c",
+        "ngx_config.h": "c",
+        "dasics_stdio.h": "c"
+    }
+}

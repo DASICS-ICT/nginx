@@ -193,6 +193,9 @@ static char        *ngx_signal;
 static char **ngx_os_environ;
 
 
+#include <udasics.h>
+
+
 int ngx_cdecl
 main(int argc, char *const *argv)
 {

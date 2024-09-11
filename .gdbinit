@@ -1,5 +1,8 @@
 file ./build/nginx
 
+!pkill nginx
+
+target remote :1234
 
 set follow-fork-mode child
 

@@ -8,6 +8,8 @@
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_event.h>
+#include <mem.h>
+#include <openssl_mem.h>
 
 
 #define NGX_SSL_PASSWORD_BUFFER_SIZE  4096
@@ -136,6 +138,7 @@ int  ngx_ssl_next_certificate_index;
 int  ngx_ssl_certificate_name_index;
 int  ngx_ssl_stapling_index;
 
+#include <udasics.h>
 
 ngx_int_t
 ngx_ssl_init(ngx_log_t *log)
@@ -146,6 +149,10 @@ ngx_ssl_init(ngx_log_t *log)
     OPENSSL_INIT_SETTINGS  *init;
 
     opts = OPENSSL_INIT_LOAD_CONFIG;
+
+    OPENSSL_malloc_hook((malloc_hook)((uint64_t)&dasics_umaincall));
+    OPENSSL_realloc_hook((realloc_hook)((uint64_t)&dasics_umaincall));
+    OPENSSL_free_hook((free_hook)((uint64_t)&dasics_umaincall));
 
 #if (NGX_OPENSSL_NO_CONFIG)
 
@@ -186,6 +193,11 @@ ngx_ssl_init(ngx_log_t *log)
 #else
 
 #if (NGX_OPENSSL_NO_CONFIG)
+    init_openssl_self_heap(MB * 512);
+    
+    OPENSSL_malloc_hook((malloc_hook)((uint64_t)&dasics_umaincall));
+    OPENSSL_realloc_hook((realloc_hook)((uint64_t)&dasics_umaincall));
+    OPENSSL_free_hook((free_hook)((uint64_t)&dasics_umaincall));
 
     if (getenv("OPENSSL_CONF") == NULL) {
         OPENSSL_no_config();

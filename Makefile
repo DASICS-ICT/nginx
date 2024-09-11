@@ -16,12 +16,12 @@ modules:
 	$(MAKE) -f /home/wanghan/Workspace/DASICS_ICT/DASICS-DEMO/demo-nginx/nginx/build/Makefile modules
 
 upgrade:
-	/home/wanghan/Workspace/DASICS_ICT/DASICS-DEMO/demo-nginx/nginx/../nginx-bin-x86/sbin/nginx -t
+	/home/wanghan/Workspace/DASICS_ICT/DASICS-DEMO/demo-nginx/nginx/../nginx-bin/sbin/nginx -t
 
-	kill -USR2 `cat /home/wanghan/Workspace/DASICS_ICT/DASICS-DEMO/demo-nginx/nginx/../nginx-bin-x86/logs/nginx.pid`
+	kill -USR2 `cat /run/nginx.pid`
 	sleep 1
-	test -f /home/wanghan/Workspace/DASICS_ICT/DASICS-DEMO/demo-nginx/nginx/../nginx-bin-x86/logs/nginx.pid.oldbin
+	test -f /run/nginx.pid.oldbin
 
-	kill -QUIT `cat /home/wanghan/Workspace/DASICS_ICT/DASICS-DEMO/demo-nginx/nginx/../nginx-bin-x86/logs/nginx.pid.oldbin`
+	kill -QUIT `cat /run/nginx.pid.oldbin`
 
 .PHONY:	build install modules upgrade
