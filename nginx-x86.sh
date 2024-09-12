@@ -6,7 +6,6 @@
  --user=nginx\
  --group=nginx\
  --with-file-aio\
- --with-ipv6\
  --with-cc=gcc\
  --with-cpp=g++\
  --with-http_ssl_module\
@@ -44,4 +43,4 @@
 #  --pid-path=/run/nginx.pid\
 #  --lock-path=/run/lock/subsys/nginx
 
-# make -j`nproc` && make install
+make -j`nproc` && make install

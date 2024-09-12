@@ -1,5 +1,6 @@
 file ./build/nginx
 
+!pkill nginx
 
 set follow-fork-mode child
 
@@ -14,4 +15,3 @@ run -c /home/wanghan/Workspace/DASICS_ICT/DASICS-DEMO/demo-nginx/nginx-bin-x86/c
 
 b ssl3_read_bytes
 
-c
