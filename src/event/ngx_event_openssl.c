@@ -891,17 +891,25 @@ ngx_ssl_password_callback(char *buf, int size, int rwflag, void *userdata)
     return size;
 }
 
+#include <udasics.h>
+#include <assert.h>
 
 ngx_int_t
 ngx_ssl_ciphers(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *ciphers,
     ngx_uint_t prefer_server_ciphers)
-{
+{   
+
+    
+    uint32_t idx = LIBCFG_ALLOC(DASICS_LIBCFG_V | DASICS_LIBCFG_R | DASICS_LIBCFG_W, (uint64_t)ciphers->data, strlen((char *)ciphers->data));
+    assert((int)idx != -1);
     if (SSL_CTX_set_cipher_list(ssl->ctx, (char *) ciphers->data) == 0) {
         ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
                       "SSL_CTX_set_cipher_list(\"%V\") failed",
                       ciphers);
+        assert((int)dasics_libcfg_free(idx) != -1);
         return NGX_ERROR;
     }
+    assert((int)dasics_libcfg_free(idx) != -1);
 
     if (prefer_server_ciphers) {
         SSL_CTX_set_options(ssl->ctx, SSL_OP_CIPHER_SERVER_PREFERENCE);
@@ -4621,11 +4629,17 @@ ngx_ssl_ticket_key_callback(ngx_ssl_conn_t *ssl_conn,
             return -1;
         }
 
+        printf("[LIBCFG]: addr: 0x%lx, end: 0x%lx\n", (uint64_t)&key[0],(uint64_t)&key[0] + sizeof(ngx_ssl_ticket_key_t));
+        int aeskey_idx = LIBCFG_ALLOC(DASICS_LIBCFG_W | DASICS_LIBCFG_R | DASICS_LIBCFG_V, (uint64_t)&key[0], sizeof(ngx_ssl_ticket_key_t));
+
         if (EVP_EncryptInit_ex(ectx, cipher, NULL, key[0].aes_key, iv) != 1) {
             ngx_ssl_error(NGX_LOG_ALERT, c->log, 0,
                           "EVP_EncryptInit_ex() failed");
+            assert(dasics_libcfg_free(aeskey_idx)!= -1);
             return -1;
         }
+        assert(dasics_libcfg_free(aeskey_idx)!= -1);
+
 
 #if OPENSSL_VERSION_NUMBER >= 0x10000000L
         if (HMAC_Init_ex(hctx, key[0].hmac_key, size, digest, NULL) != 1) {
