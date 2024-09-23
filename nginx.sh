@@ -25,7 +25,7 @@
  --with-http_auth_request_module\
  --with-mail=dynamic\
  --with-openssl-opt=\
- --with-openssl=$PWD/../openssl\
+ --with-openssl=$PWD/../openssl-copy\
  --with-pcre\
  --with-pcre-jit\
  --with-stream=dynamic\
@@ -49,6 +49,6 @@ make -j`nproc` && make install
 
 riscv64-unknown-linux-gnu-objdump -d ./build/nginx > nginx.txt
 
-scp -P 12055 -r ../nginx-bin/sbin/nginx wanghan@localhost:
+# scp -P 12055 -r ../nginx-bin/sbin/nginx wanghan@localhost:
 scp -P 12055 -r ../nginx-bin/sbin/nginx wanghan@localhost:nginx-normal
 

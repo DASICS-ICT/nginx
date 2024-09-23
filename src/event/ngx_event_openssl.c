@@ -140,6 +140,28 @@ int  ngx_ssl_stapling_index;
 
 #include <udasics.h>
 
+void * ngx_malloc_hook(void * null, void * null1, size_t size);
+void * ngx_realloc_hook(void * null, void * null1, void * mem, size_t size);
+void ngx_free_hook(void * null, void * null1, void * mem);
+
+void * ngx_malloc_hook(void * null, void * null1, size_t size)
+{
+    return malloc(size);
+}
+
+void * ngx_realloc_hook(void * null, void * null1, void * mem, size_t size)
+{
+    return realloc(mem, size);
+}
+
+void ngx_free_hook(void * null, void * null1, void * mem)
+{
+    // free(mem);
+    // return realloc(mem, 512);
+    // free(NULL);
+    fprintf(stderr ,"fuck time assume\n");
+}
+
 ngx_int_t
 ngx_ssl_init(ngx_log_t *log)
 {
@@ -198,6 +220,10 @@ ngx_ssl_init(ngx_log_t *log)
     OPENSSL_malloc_hook((malloc_hook)((uint64_t)&dasics_umaincall));
     OPENSSL_realloc_hook((realloc_hook)((uint64_t)&dasics_umaincall));
     OPENSSL_free_hook((free_hook)((uint64_t)&dasics_umaincall));
+
+    // OPENSSL_malloc_hook((malloc_hook)((uint64_t)&ngx_malloc_hook));
+    // OPENSSL_realloc_hook((realloc_hook)((uint64_t)&ngx_realloc_hook));
+    // OPENSSL_free_hook((free_hook)((uint64_t)&ngx_free_hook));
 
     if (getenv("OPENSSL_CONF") == NULL) {
         OPENSSL_no_config();
@@ -4629,7 +4655,7 @@ ngx_ssl_ticket_key_callback(ngx_ssl_conn_t *ssl_conn,
             return -1;
         }
 
-        printf("[LIBCFG]: addr: 0x%lx, end: 0x%lx\n", (uint64_t)&key[0],(uint64_t)&key[0] + sizeof(ngx_ssl_ticket_key_t));
+        // printf("[LIBCFG]: addr: 0x%lx, end: 0x%lx\n", (uint64_t)&key[0],(uint64_t)&key[0] + sizeof(ngx_ssl_ticket_key_t));
         int aeskey_idx = LIBCFG_ALLOC(DASICS_LIBCFG_W | DASICS_LIBCFG_R | DASICS_LIBCFG_V, (uint64_t)&key[0], sizeof(ngx_ssl_ticket_key_t));
 
         if (EVP_EncryptInit_ex(ectx, cipher, NULL, key[0].aes_key, iv) != 1) {
