@@ -236,19 +236,17 @@ build:	binary modules manpage
 
 binary:	$NGX_OBJS${ngx_dirsep}nginx$ngx_binext 
 
-libdasics: \$(BIN_DASICS)
 
 
 .PHONY: libdasics
 
-\$(BIN_DASICS):
+libdasics:
 ifeq (\$(wildcard \$(DIR_DASICS)/*),)
 	git submodule update --init \$(DIR_DASICS)
 endif
 	\$(MAKE) -C \$(DIR_DASICS)
 
 $NGX_OBJS${ngx_dirsep}nginx$ngx_binext:	$ngx_deps	libdasics$ngx_spacer
-    \$(MAKE) -C \$(DIR_DASICS)
 	\$(LINK) $ngx_long_start$ngx_binout$NGX_OBJS${ngx_dirsep}nginx$ngx_binext$ngx_long_cont$ngx_objs \$(BIN_DASICS)$ngx_libs$ngx_link \$(DASICS_FLAG)$ngx_main_link
 	$ngx_rcc
 $ngx_long_end
