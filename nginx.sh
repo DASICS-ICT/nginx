@@ -25,7 +25,7 @@
  --with-http_auth_request_module\
  --with-mail=dynamic\
  --with-openssl-opt=\
- --with-openssl=$PWD/../openssl-copy\
+ --with-openssl=$PWD/../openssl\
  --with-pcre\
  --with-pcre-jit\
  --with-stream=dynamic\
@@ -42,13 +42,9 @@
  --pid-path=/run/nginx.pid\
  --lock-path=/run/lock/subsys/nginx
 
-make -C LibDASICS clean
-make -C LibDASICS
 
-make -j`nproc` && make install
+make -j`nproc`
 
 riscv64-unknown-linux-gnu-objdump -d ./build/nginx > nginx.txt
 
-# scp -P 12055 -r ../nginx-bin/sbin/nginx wanghan@localhost:
-scp -P 12055 -r ../nginx-bin/sbin/nginx wanghan@localhost:nginx-normal
 
