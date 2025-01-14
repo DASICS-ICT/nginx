@@ -3,4 +3,5 @@ objs
 .gdb_history
 nginx.txt
 file.sh
+copy.sh
 .vscode

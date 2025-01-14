@@ -1,20 +1,8 @@
 file ./build/nginx
 
-!pkill nginx
-
+b handle_DasicsULoadFault
+b handle_DasicsUStoreFault
+b SSL_CTX_free
+b ngx_ssl_cleanup_ctx
 target remote :1234
-
-set follow-fork-mode child
-
-b main
-
-b ngx_ssl_init
-
-b ngx_process_events_and_timers
-
-b ngx_http_init_connection
-run -c /home/wanghan/Workspace/DASICS_ICT/DASICS-DEMO/demo-nginx/nginx-bin-x86/conf/nginx.conf
-
-b ssl3_read_bytes
-
 c

@@ -50,5 +50,5 @@ make -j`nproc` && make install
 riscv64-unknown-linux-gnu-objdump -d ./build/nginx > nginx.txt
 
 # scp -P 12055 -r ../nginx-bin/sbin/nginx wanghan@localhost:
-scp -P 12055 -r ../nginx-bin/sbin/nginx wanghan@localhost:nginx-normal
+# scp -P 12055 -r ../nginx-bin/sbin/nginx wanghan@localhost:nginx-normal
 

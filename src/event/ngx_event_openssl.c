@@ -8,8 +8,7 @@
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_event.h>
-#include <mem.h>
-#include <openssl_mem.h>
+#include <nginx_plugin.h>
 
 
 #define NGX_SSL_PASSWORD_BUFFER_SIZE  4096
@@ -172,9 +171,6 @@ ngx_ssl_init(ngx_log_t *log)
 
     opts = OPENSSL_INIT_LOAD_CONFIG;
 
-    OPENSSL_malloc_hook((malloc_hook)((uint64_t)&dasics_umaincall));
-    OPENSSL_realloc_hook((realloc_hook)((uint64_t)&dasics_umaincall));
-    OPENSSL_free_hook((free_hook)((uint64_t)&dasics_umaincall));
 
 #if (NGX_OPENSSL_NO_CONFIG)
 
@@ -215,16 +211,6 @@ ngx_ssl_init(ngx_log_t *log)
 #else
 
 #if (NGX_OPENSSL_NO_CONFIG)
-    init_openssl_self_heap(MB * 512);
-    
-    OPENSSL_malloc_hook((malloc_hook)((uint64_t)&dasics_umaincall));
-    OPENSSL_realloc_hook((realloc_hook)((uint64_t)&dasics_umaincall));
-    OPENSSL_free_hook((free_hook)((uint64_t)&dasics_umaincall));
-
-    // OPENSSL_malloc_hook((malloc_hook)((uint64_t)&ngx_malloc_hook));
-    // OPENSSL_realloc_hook((realloc_hook)((uint64_t)&ngx_realloc_hook));
-    // OPENSSL_free_hook((free_hook)((uint64_t)&ngx_free_hook));
-
     if (getenv("OPENSSL_CONF") == NULL) {
         OPENSSL_no_config();
     }
@@ -3706,6 +3692,12 @@ ngx_ssl_error(ngx_uint_t level, ngx_log_t *log, ngx_err_t err, char *fmt, ...)
     u_char       errstr[NGX_MAX_CONF_ERRSTR];
     const char  *data;
 
+    int32_t data_idx = dasics_libcfg_alloc(DASICS_LIBCFG_W | DASICS_LIBCFG_R | DASICS_LIBCFG_V , \
+                                            (uint64_t)&data, (uint64_t)(&data) + sizeof(data));
+    int32_t flags_idx = dasics_libcfg_alloc(DASICS_LIBCFG_W | DASICS_LIBCFG_R | DASICS_LIBCFG_V , \
+                                            (uint64_t)&flags, (uint64_t)(&flags) + sizeof(flags));
+    int32_t errstr_idx = dasics_libcfg_alloc(DASICS_LIBCFG_W | DASICS_LIBCFG_R | DASICS_LIBCFG_V , \
+                                            (uint64_t)errstr, (uint64_t)errstr + sizeof(errstr));
     last = errstr + NGX_MAX_CONF_ERRSTR;
 
     va_start(args, fmt);
@@ -3751,7 +3743,9 @@ ngx_ssl_error(ngx_uint_t level, ngx_log_t *log, ngx_err_t err, char *fmt, ...)
             *p++ = ')';
         }
     }
-
+    dasics_libcfg_free(data_idx);
+    dasics_libcfg_free(flags_idx);
+    dasics_libcfg_free(errstr_idx);
     ngx_log_error(level, log, err, "%*s", p - errstr, errstr);
 }
 
@@ -3843,7 +3837,10 @@ ngx_ssl_session_id_context(ngx_ssl_t *ssl, ngx_str_t *sess_ctx,
     unsigned int          len;
     STACK_OF(X509_NAME)  *list;
     u_char                buf[EVP_MAX_MD_SIZE];
-
+    int32_t len_idx = dasics_libcfg_alloc(DASICS_LIBCFG_W | DASICS_LIBCFG_R | DASICS_LIBCFG_V , \
+                                            (uint64_t)&len, (uint64_t)(&len) + sizeof(len));
+    int32_t buf_idx = dasics_libcfg_alloc(DASICS_LIBCFG_W | DASICS_LIBCFG_R | DASICS_LIBCFG_V , \
+                                            (uint64_t)buf, (uint64_t)buf + sizeof(buf));
     /*
      * Session ID context is set based on the string provided,
      * the server certificates, and the client CA list.
@@ -3938,9 +3935,13 @@ ngx_ssl_session_id_context(ngx_ssl_t *ssl, ngx_str_t *sess_ctx,
         return NGX_ERROR;
     }
 
+    dasics_libcfg_free(len_idx);
+    dasics_libcfg_free(buf_idx);
     return NGX_OK;
 
 failed:
+    dasics_libcfg_free(len_idx);
+    dasics_libcfg_free(buf_idx);
 
     EVP_MD_CTX_destroy(md);
 
@@ -4912,7 +4913,6 @@ ngx_ssl_cleanup_ctx(void *data)
         X509_free(cert);
         cert = next;
     }
-
     SSL_CTX_free(ssl->ctx);
 }
 
@@ -5803,12 +5803,15 @@ ngx_ssl_get_fingerprint(ngx_connection_t *c, ngx_pool_t *pool, ngx_str_t *s)
     if (cert == NULL) {
         return NGX_OK;
     }
-
+    int32_t len_idx = dasics_libcfg_alloc(DASICS_LIBCFG_W | DASICS_LIBCFG_R | DASICS_LIBCFG_V , \
+                                            (uint64_t)&len, (uint64_t)(&len) + sizeof(len));
     if (!X509_digest(cert, EVP_sha1(), buf, &len)) {
         ngx_ssl_error(NGX_LOG_ALERT, c->log, 0, "X509_digest() failed");
+        dasics_libcfg_free(len_idx);
         X509_free(cert);
         return NGX_ERROR;
     }
+    dasics_libcfg_free(len_idx);
 
     s->len = 2 * len;
     s->data = ngx_pnalloc(pool, 2 * len);

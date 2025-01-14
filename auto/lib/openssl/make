@@ -66,10 +66,9 @@ $OPENSSL/.openssl/include/openssl/ssl.h:	$NGX_MAKEFILE
 END
 	# cd $OPENSSL \\
     # && export CC= \\
-    # && ./Configure -ggdb3 linux-generic64 --cross-compile-prefix=riscv64-unknown-linux-gnu- --prefix=$ngx_prefix shared no-asm no-threads $OPENSSL_OPT --openssldir=openssl\\
-    # && make -j1 \\
+    # && ./Configure linux64-riscv64 no-threads shared --cross-compile-prefix=riscv64-unknown-linux-gnu- --prefix=$ngx_prefix $OPENSSL_OPT --openssldir=openssl\\
+    # && make -j`nproc` \\
     # && make install_sw LIBDIR=lib \\
-    # && if [ -f Makefile ]; then \$(MAKE) clean; fi \\
     ;;
 
 esac
