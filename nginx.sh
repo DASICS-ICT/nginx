@@ -25,7 +25,7 @@
  --with-http_auth_request_module\
  --with-mail=dynamic\
  --with-openssl-opt=\
- --with-openssl=$PWD/../openssl-copy\
+ --with-openssl=$PWD/../openssl\
  --with-pcre\
  --with-pcre-jit\
  --with-stream=dynamic\
